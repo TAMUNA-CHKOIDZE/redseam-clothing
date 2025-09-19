@@ -1,0 +1,98 @@
+/* index.css or wherever you define global styles */
+@import "tailwindcss";
+
+
+/* Load the font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+
+/* Default css */
+@theme {
+    /* ---------- COLOR ---------- */
+    /* Primary Color */
+    --color-primary: #FF4000;
+
+    /* Neutral Colors */
+    --color-dark-blue: #10151F;
+    --color-dark-blue-light: #3E424A;
+    --color-white: #FFFFFF;
+
+    /* Grays */
+    --color-dark-gary: #212B36;
+    --color-gray-light: #E1DFE1;
+    --color-gray-lightest: #F8F6F7;
+
+    /* Pastel / Soft Colors */
+    --color-purple-light: #C8B5FD;
+    --color-pink-light: #F3E7EB;
+    --color-yellow-light: #F3DCA7;
+
+    /* ---------- FONT ---------- */
+    /* Font families */
+    --font-family-base: 'Poppins', sans-serif;
+
+    /* Font sizes */
+    --font-size-xxl: 42px;
+    --font-size-xl: 24px;
+    --font-size-lg: 22px;
+    --font-size-md: 20px;
+    --font-size-xxxl: 32px;
+    --font-size-md-alt: 18px;
+    --font-size-base: 16px;
+    --font-size-sm: 14px;
+    --font-size-xs: 12px;
+}
+
+/* Set it globally on the body */
+body {
+    font-family: var(--font-family-base);
+}
+
+/* heading --------- */
+.heading-primary {
+    @apply font-semibold text-[42px] leading-[100%] tracking-[0%] text-dark-blue;
+}
+
+.heading-secondary {
+    @apply font-semibold text-[32px] leading-[100%] tracking-[0%] text-dark-blue;
+}
+
+
+/* buttons -----------------------------------  */
+.btn {
+    @apply rounded-[10px] transition duration-300 cursor-pointer tracking-normal;
+}
+
+.btn:hover {
+    filter: brightness(0.95);
+}
+
+.btn-cta {
+    @apply bg-primary;
+    color: var(--color-white);
+    border: none;
+}
+
+/* apply, start-shopping, continue-shopping, log-in, register ღილაკების ტექსტის სტილები  */
+.text-base-14 {
+    @apply font-normal text-sm leading-[100%] tracking-normal;
+}
+
+/* add-cart, checkout, pay ღილაკების ტექსტის სტილები */
+.text-semibold-18 {
+    @apply font-semibold text-lg leading-[100%] tracking-normal;
+}
+
+.btn-pagination {
+    @apply w-[32px] h-[32px] rounded-[4px] bg-white border border-gray-lightest text-[14px] leading-[20px] font-medium text-center;
+    color: var(--color-dark-gary);
+}
+
+.btn-pagination.active {
+    @apply border-primary text-primary;
+}
+
+/* input ---------------------  */
+.input {
+    @apply border border-[#E1DFE1] rounded-[8px] bg-white h-[40px] px-[12px] outline-none placeholder:text-[14px] placeholder:leading-[100%] placeholder:font-normal placeholder:tracking-[0%] placeholder:text-[#3E424A];
+}
