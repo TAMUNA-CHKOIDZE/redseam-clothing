@@ -1,9 +1,8 @@
-/* index.css or wherever you define global styles */
-@import "tailwindcss";
-
-
 /* Load the font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* index.css or wherever you define global styles */
+@import "tailwindcss";
 
 
 /* Default css */
@@ -94,5 +93,5 @@ body {
 
 /* input ---------------------  */
 .input {
-    @apply border border-[#E1DFE1] rounded-[8px] bg-white h-[40px] px-[12px] outline-none placeholder:text-[14px] placeholder:leading-[100%] placeholder:font-normal placeholder:tracking-[0%] placeholder:text-[#3E424A];
+    @apply w-full border border-[#E1DFE1] rounded-[8px] bg-white h-[40px] px-[12px] placeholder:text-[14px] placeholder:leading-[100%] placeholder:font-normal placeholder:tracking-[0%] placeholder:text-[#3E424A];
 }
