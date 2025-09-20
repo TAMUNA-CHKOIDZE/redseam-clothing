@@ -1,13 +1,13 @@
-const home = "/";
 const login = "/login";
 const register = "/register";
+const productList = "/products"
 const productDetail = "/product/:id";
 const checkout = "/checkout";
 
 const routes = {
-  home,
   login,
   register,
+  productList,
   productDetail,
   checkout,
 };
