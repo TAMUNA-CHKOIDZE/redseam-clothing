@@ -1,9 +1,284 @@
-import React from 'react'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import CustomInput from "../components/CustomInput";
+import cover from "../assets/images/cover.png";
+import defaultAvatar from "../assets/images/profile.svg";
+import routes from "../router/routes";
 
 function Register() {
+  const navigate = useNavigate();
+
+  // ფორმის ობიექტის სტეტი
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    avatar: null,
+  });
+
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  // ავატარის ფოტოდ ატვირთვის ლოგიკა
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "avatar") {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, avatar: file }));
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setAvatarPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // input-ების ვალიდაცია პროექტში მოცემული შეზღუდვების მიხედვით
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.username || formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters.";
+    }
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email.";
+    }
+    if (!formData.password || formData.password.length < 3) {
+      newErrors.password = "Password must be at least 3 characters.";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+
+    setSubmitted(true); // ნფორმა გაიგზავნა (გამოიყენება ვალიდაციისთვის)
+    setErrors({}); // წინა ვალიდაციის შეცდომების გასუფთავება
+    setApiError(""); // წინა სერვერული შეცდომის გასუფთავება
+
+
+    // კლიენტის მხარეს ვალიდაცია 
+    const validationErrors = validate(); 
+    // შეცდომების შემთხვევაში errors-ის განალხება 
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors); 
+      return;
+    }
+
+    // ახალი FormData ობიექტის შექმნა სერვერზე multipart/form-data-ით გაგზავნისთვის
+    const data = new FormData();
+    data.append("username", formData.username);
+    data.append("email", formData.email); 
+    data.append("password", formData.password); 
+    data.append("password_confirmation", formData.confirmPassword); 
+    if (formData.avatar) {
+      data.append("avatar", formData.avatar); 
+    }
+
+    try {
+      // რეგისტრაციის მოთხოვნის გაგზავნა სერვერზე
+      const response = await fetch(
+        "https://api.redseam.redberryinternship.ge/api/register",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json", // ველოდები JSON ფორმატს
+          },
+          body: data, // ვაგზავნი მონაცემებს
+        }
+      );
+
+      const result = await response.json(); 
+
+      if (!response.ok) {
+        // თუ პასუხი არ არის წარმატებული
+        if (response.status === 422 && result.errors) {
+          // ვალიდაციის სერვერული შეცდომების დამუშავება
+          const apiValidationErrors = {};
+          for (const key in result.errors) {
+            apiValidationErrors[key] = result.errors[key][0]; 
+          }
+          setErrors(apiValidationErrors); 
+        } else {
+          setApiError(result.message || "Registration failed"); 
+        }
+      } else {
+        // წარმატებული რეგისტრაცია — გადაყვანა login-ის გვერდზე
+        navigate(routes.login);
+      }
+    } catch (error) {
+      // თუ fetch-მდე ან fetch-ის დროს მოხდა შეცდომა
+      setApiError("Something went wrong. Try again.");
+      console.error(error);
+    }
+  };
+
   return (
-    <div>Register</div>
-  )
+    <section className="flex gap-x-[173px] pr-[245px] bg-white">
+      <div className="w-[948px] h-[1000px]">
+        <img src={cover} alt="cover" className="object-cover w-full h-full" />
+      </div>
+
+      <div className="w-[554px] mt-[152px]">
+        <h1 className="heading-primary mb-[48px]">Registration</h1>
+        <form onSubmit={handleSubmit}>
+          {/* image upload */}
+          <div className="flex items-center gap-x-[15px] mb-[46px]">
+            {/* avatar image  */}
+            <div>
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="avatar preview"
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+              ) : (
+                <img
+                  src={defaultAvatar}
+                  alt="default avatar"
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+              )}
+            </div>
+            {/* Upload */}
+            <div className="relative inline-block">
+              <input
+                type="file"
+                name="avatar"
+                accept="image/*"
+                id="avatar-upload"
+                onChange={handleChange}
+                className="hidden"
+              />
+              <label
+                htmlFor="avatar-upload"
+                className="relative z-10 font-normal text-sm leading-[100%] tracking-normal text-dark-blue cursor-pointer"
+              >
+                Upload new
+              </label>
+            </div>
+            {/* Remove */}
+            <button
+              type="button"
+              onClick={() => {
+                setFormData((prev) => ({ ...prev, avatar: null }));
+                setAvatarPreview(null);
+              }}
+              className="font-normal text-sm leading-[100%] tracking-normal text-dark-blue cursor-pointer"
+            >
+              Remove
+            </button>
+          </div>
+
+          {/* inputs  */}
+          <div className="mb-[46px]">
+            <div className="mb-[24px]">
+              <CustomInput
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholderText="Username"
+                required
+                hasError={submitted && !!errors.username}
+              />
+              {errors.username && (
+                <p className="font-light text-[10px] leading-[100%] tracking-[0] text-primary mt-[4px]">
+                  {errors.username}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-[24px]">
+              <CustomInput
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholderText="Email"
+                required
+                hasError={submitted && !!errors.email}
+              />
+              {errors.email && (
+                <p className="font-light text-[10px] leading-[100%] tracking-[0] text-primary mt-[4px]">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-[24px]">
+              <CustomInput
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholderText="Password"
+                required
+                hasError={submitted && !!errors.password}
+              />
+              {errors.password && (
+                <p className="font-light text-[10px] leading-[100%] tracking-[0] text-primary mt-[4px]">
+                  {errors.password}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <CustomInput
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholderText="Confirm password"
+                required
+                hasError={submitted && !!errors.confirmPassword}
+              />
+              {errors.confirmPassword && (
+                <p className="font-light text-[10px] leading-[100%] tracking-[0] text-primary mt-[4px]">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
+          </div>
+          {/* Register */}
+          <button
+            type="submit"
+            className="w-full btn btn-cta text-base-14 h-[41px]"
+          >
+            Register
+          </button>
+
+          {apiError && (
+            <p className="text-primary text-sm text-center">{apiError}</p>
+          )}
+
+          {/* Already member? */}
+          <p className="text-center mt-4">
+            <span className="font-normal text-[14px] leading-[100%] tracking-[0] text-dark-blue mr-[8px]">
+              Already member?
+            </span>
+            <Link
+              to={routes.login}
+              className="font-medium text-[14px] leading-[100%] tracking-[0] text-primary hover:underline"
+            >
+              Log in
+            </Link>
+          </p>
+        </form>
+      </div>
+    </section>
+  );
 }
 
-export default Register
+export default Register;
