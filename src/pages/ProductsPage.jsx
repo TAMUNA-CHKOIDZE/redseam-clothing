@@ -5,6 +5,7 @@ import xMark from "../assets/icons/x-mark.svg";
 import { fetchProducts } from "../api/products";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
+import CustomInput from "../components/CustomInput";
 
 function ProductsPage() {
   // პროდუქტების და pagination-ისთვის საჭირო ინფორმაციის სტეიტები
@@ -124,21 +125,19 @@ function ProductsPage() {
                   Select price
                 </h5>
                 <div className="flex items-center gap-x-[10px] mb-[10px]">
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder="from"
+                  <CustomInput
+                    name="priceFrom"
                     value={priceFrom}
                     onChange={(e) => setPriceFrom(e.target.value)}
-                    className="px-[12px] h-[42px] input"
+                    placeholderText="From"
+                    required={true}
                   />
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder="to"
+                  <CustomInput
+                    name="priceTo"
                     value={priceTo}
                     onChange={(e) => setPriceTo(e.target.value)}
-                    className="px-[12px] h-[42px] input"
+                    placeholderText="To"
+                    required={true}
                   />
                 </div>
                 <div
