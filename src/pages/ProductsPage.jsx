@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import filterIcon from "../assets/icons/filter.svg";
 import sortIcon from "../assets/icons/chevron-down.svg";
+import xMark from "../assets/icons/x-mark.svg";
 import { fetchProducts } from "../api/products";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
@@ -27,34 +28,6 @@ function ProductsPage() {
   // ფილტრის და სორტის ველების გამოჩენა-გაქრობისთვის
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
-
-  // priceFrom და priceTo აისახება სეითში ჩვეულებრივად onChange-ით,
-  // 700 მილის შემდეგ ხდება debounce, და შეიცვლება debouncedPriceFrom და debouncedPriceTo,
-  const [debouncedPriceFrom, setDebouncedPriceFrom] = useState(priceFrom);
-  const [debouncedPriceTo, setDebouncedPriceTo] = useState(priceTo);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedPriceFrom(priceFrom);
-    }, 700);
-    return () => clearTimeout(handler);
-  }, [priceFrom]);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedPriceTo(priceTo);
-    }, 700);
-    return () => clearTimeout(handler);
-  }, [priceTo]);
-
-  // API-ის გამოძახება მაშინ, როცა debounced ველები შეიცვლება
-  useEffect(() => {
-    loadProducts(1, {
-      priceFrom: debouncedPriceFrom,
-      priceTo: debouncedPriceTo,
-      sort,
-    });
-  }, [debouncedPriceFrom, debouncedPriceTo, sort]);
 
   // API-ზე პროდუქტის ჩამოტვირთვა პარამეტრებით ერთი გვერდისთვის
   const loadProducts = (page = 1, filters = {}) => {
@@ -105,6 +78,12 @@ function ProductsPage() {
     setShowFilter(false);
   };
 
+  const resetFilter = () => {
+    setPriceFrom("");
+    setPriceTo("");
+    loadProducts(1, { priceFrom: "", priceTo: "" });
+  };
+
   // ჩატვირთვის დროს ვაჩვენებ loading-ს ტექსტის სახით და უნდა შეცვალო სკელეტონით
   if (loading) {
     return <div className="text-center py-20">Loading...</div>;
@@ -140,23 +119,39 @@ function ProductsPage() {
             </div>
 
             {showFilter && (
-              <div className="absolute top-full mt-2 bg-white p-4 rounded shadow-md flex items-center gap-x-[8px] z-10">
-                <input
-                  type="number"
-                  min={0}
-                  placeholder="from"
-                  value={priceFrom}
-                  onChange={(e) => setPriceFrom(e.target.value)}
-                  className="border border-gray-300 rounded px-2 py-1 w-[80px]"
-                />
-                <input
-                  type="number"
-                  min={0}
-                  placeholder="to"
-                  value={priceTo}
-                  onChange={(e) => setPriceTo(e.target.value)}
-                  className="border border-gray-300 rounded px-2 py-1 w-[80px]"
-                />
+              <div className="absolute top-[34px] right-[0px]  bg-white rounded-[8px] z-10 w-[392px] p-[16px] border border-solid border-[#E1DFE1]">
+                <h5 className="font-semibold text-base leading-none tracking-normal text-dark-blue mb-[20px]">
+                  Select price
+                </h5>
+                <div className="flex items-center gap-x-[10px] mb-[10px]">
+                  <input
+                    type="number"
+                    min={0}
+                    placeholder="from"
+                    value={priceFrom}
+                    onChange={(e) => setPriceFrom(e.target.value)}
+                    className="px-[12px] h-[42px] input"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    placeholder="to"
+                    value={priceTo}
+                    onChange={(e) => setPriceTo(e.target.value)}
+                    className="px-[12px] h-[42px] input"
+                  />
+                </div>
+                <div
+                  className="text-right"
+                  onClick={() => {
+                    handleFilterSortChange();
+                    setShowFilter(false);
+                  }}
+                >
+                  <button className="btn btn-cta text-base-14 w-[124px] h-[42px]">
+                    Apply
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -174,25 +169,78 @@ function ProductsPage() {
             </div>
 
             {showSort && (
-              <select
-                className="absolute top-full mt-2 border border-gray-300 rounded p-2 text-dark-blue z-10 bg-white"
-                value={sort}
-                onChange={(e) => {
-                  setSort(e.target.value);
-                  setShowSort(false);
-                  handleFilterSortChange();
-                }}
-              >
-                <option value="">Default</option>
-                <option value="price">Price: High to Low</option>
-                <option value="-price">Price: Low to High</option>
-                <option value="created_at">Date: Oldest First</option>
-                <option value="-created_at">Date: Newest First</option>
-              </select>
+              <div className="absolute top-[34px] right-[0px] bg-white rounded-[8px] z-10 w-[223px] p-[16px] border border-solid border-[#E1DFE1]">
+                <button
+                  onClick={() => {
+                    setSort("-created_at");
+                    setShowSort(false);
+                    handleFilterSortChange();
+                  }}
+                  className={`block w-full text-left py-2 ${
+                    sort === "-created_at" ? "text-dark-blue font-medium" : ""
+                  }`}
+                >
+                  New products first
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSort("price");
+                    setShowSort(false);
+                    handleFilterSortChange();
+                  }}
+                  className={`block w-full text-left py-2 ${
+                    sort === "price" ? "text-dark-blue font-medium" : ""
+                  }`}
+                >
+                  Price, low to high
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSort("-price");
+                    setShowSort(false);
+                    handleFilterSortChange();
+                  }}
+                  className={`block w-full text-left py-2 ${
+                    sort === "-price" ? "text-dark-blue font-medium" : ""
+                  }`}
+                >
+                  Price, high to low
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSort("");
+                    setShowSort(false);
+                    loadProducts(1, { priceFrom, priceTo, sort: "" });
+                  }}
+                  className={`block w-full text-left py-2 ${
+                    sort === "" ? "text-dark-blue font-medium" : ""
+                  }`}
+                >
+                  Default
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* ფილტრაციის შედეგი  */}
+      {priceFrom && priceTo && (
+        <div className="items-center gap-x-[6px] border border-solid border-[#E1DFE1] px-[16px] py-[8px] inline-flex rounded-[50px] mb-[26px]">
+          <h6 className="text-dark-blue font-poppins font-normal text-[14px] leading-none tracking-normal">
+            Price: {priceFrom}-{priceTo}
+          </h6>
+          <img
+            src={xMark}
+            alt="x-mark"
+            className="cursor-pointer"
+            onClick={resetFilter}
+          />
+        </div>
+      )}
 
       {/* პროდუქტის სია */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
