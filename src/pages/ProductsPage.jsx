@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import routes from "../router/routes";
 import filterIcon from "../assets/icons/filter.svg";
 import sortIcon from "../assets/icons/chevron-down.svg";
 import { fetchProducts } from "../api/products";
 import Pagination from "../components/Pagination";
+import ProductCard from "../components/ProductCard";
 
 function ProductsPage() {
   // პროდუქტების და pagination-ისთვის საჭირო ინფორმაციის სტეიტები
@@ -56,7 +55,6 @@ function ProductsPage() {
       sort,
     });
   }, [debouncedPriceFrom, debouncedPriceTo, sort]);
-
 
   // API-ზე პროდუქტის ჩამოტვირთვა პარამეტრებით ერთი გვერდისთვის
   const loadProducts = (page = 1, filters = {}) => {
@@ -199,27 +197,8 @@ function ProductsPage() {
       {/* პროდუქტის სია */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
         {products.map((product) => (
-          <Link
-            key={product.id}
-            to={routes.productDetail.replace(":id", product.id.toString())}
-            className="hover:shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-shadow rounded-[10px]"
-          >
-            <div className="w-full h-[549px] flex items-center justify-center mb-[12px]">
-              <img
-                src={product.cover_image}
-                alt={product.name}
-                className="object-cover w-full h-full rounded-t-[10px]"
-              />
-            </div>
-            <div>
-              <h2 className="font-medium text-[18px] leading-[100%] tracking-[0] text-dark-blue">
-                {product.name}
-              </h2>
-              <p className="font-medium text-base leading-[100%] tracking-[0] text-dark-blue mt-2">
-                ${product.price}
-              </p>
-            </div>
-          </Link>
+          // <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
