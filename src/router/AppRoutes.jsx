@@ -2,7 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import routes from "./routes";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import ProductPage from "../pages/ProductPage";
+import ProductsPage from "../pages/ProductsPage";
+import ProductDetailsPage from "../pages/ProductDetailsPage";
 import Checkout from "../pages/Checkout";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -22,7 +23,7 @@ const AppRoutes = () => {
         path={routes.productList}
         element={
           <ProtectedRoute>
-            <ProductPage />
+            <ProductsPage />
           </ProtectedRoute>
         }
       />
@@ -31,7 +32,7 @@ const AppRoutes = () => {
         path={routes.productDetail}
         element={
           <ProtectedRoute>
-            <ProductPage />
+            <ProductDetailsPage />
           </ProtectedRoute>
         }
       />
