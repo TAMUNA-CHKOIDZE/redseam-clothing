@@ -1,10 +1,12 @@
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import routes from "./routes";
 
 function RootRedirect() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useContext(AuthContext);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     // ვიყენებ როუტის სწორად გადამისამართებისთვის: თუ ავტორიზებულია იუზერი, მაშინ საიტზე შესვლისას
     // ავტომატურად გამოუჩინოს productList-ის გვერდი თუ არადა login-ის გვერდი.
