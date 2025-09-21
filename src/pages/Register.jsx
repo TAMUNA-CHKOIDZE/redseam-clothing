@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CustomInput from "../components/CustomInput";
 import cover from "../assets/images/cover.png";
-import defaultAvatar from "../assets/images/profile.svg";
+import cameraIcon from "../assets/icons/camera.svg";
 import routes from "../router/routes";
 
 function Register() {
@@ -61,29 +61,28 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     setSubmitted(true); // ნფორმა გაიგზავნა (გამოიყენება ვალიდაციისთვის)
     setErrors({}); // წინა ვალიდაციის შეცდომების გასუფთავება
     setApiError(""); // წინა სერვერული შეცდომის გასუფთავება
 
-
-    // კლიენტის მხარეს ვალიდაცია 
-    const validationErrors = validate(); 
-    // შეცდომების შემთხვევაში errors-ის განალხება 
+    // კლიენტის მხარეს ვალიდაცია
+    const validationErrors = validate();
+    // შეცდომების შემთხვევაში errors-ის განალხება
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors); 
+      setErrors(validationErrors);
       return;
     }
 
     // ახალი FormData ობიექტის შექმნა სერვერზე multipart/form-data-ით გაგზავნისთვის
     const data = new FormData();
     data.append("username", formData.username);
-    data.append("email", formData.email); 
-    data.append("password", formData.password); 
-    data.append("password_confirmation", formData.confirmPassword); 
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    data.append("password_confirmation", formData.confirmPassword);
     if (formData.avatar) {
-      data.append("avatar", formData.avatar); 
+      data.append("avatar", formData.avatar);
     }
 
     try {
@@ -99,7 +98,7 @@ function Register() {
         }
       );
 
-      const result = await response.json(); 
+      const result = await response.json();
 
       if (!response.ok) {
         // თუ პასუხი არ არის წარმატებული
@@ -107,11 +106,11 @@ function Register() {
           // ვალიდაციის სერვერული შეცდომების დამუშავება
           const apiValidationErrors = {};
           for (const key in result.errors) {
-            apiValidationErrors[key] = result.errors[key][0]; 
+            apiValidationErrors[key] = result.errors[key][0];
           }
-          setErrors(apiValidationErrors); 
+          setErrors(apiValidationErrors);
         } else {
-          setApiError(result.message || "Registration failed"); 
+          setApiError(result.message || "Registration failed");
         }
       } else {
         // წარმატებული რეგისტრაცია — გადაყვანა login-ის გვერდზე
@@ -133,52 +132,55 @@ function Register() {
       <div className="w-[554px] mt-[152px]">
         <h1 className="heading-primary mb-[48px]">Registration</h1>
         <form onSubmit={handleSubmit}>
-          {/* image upload */}
+          {/* Avatar upload section */}
           <div className="flex items-center gap-x-[15px] mb-[46px]">
-            {/* avatar image  */}
-            <div>
+            {/* Circle with avatar or camera icon */}
+            <div className="w-24 h-24">
               {avatarPreview ? (
                 <img
                   src={avatarPreview}
                   alt="avatar preview"
-                  className="w-24 h-24 rounded-full object-cover"
+                  className="object-cover w-full h-full rounded-full"
                 />
               ) : (
-                <img
-                  src={defaultAvatar}
-                  alt="default avatar"
-                  className="w-24 h-24 rounded-full object-cover"
-                />
+                <div className="w-full h-full rounded-full  border border-gray-light flex items-center justify-center">
+                  <img src={cameraIcon} alt="camera icon" className="w-6 h-6" />
+                </div>
               )}
             </div>
-            {/* Upload */}
-            <div className="relative inline-block">
-              <input
-                type="file"
-                name="avatar"
-                accept="image/*"
-                id="avatar-upload"
-                onChange={handleChange}
-                className="hidden"
-              />
-              <label
-                htmlFor="avatar-upload"
-                className="relative z-10 font-normal text-sm leading-[100%] tracking-normal text-dark-blue cursor-pointer"
-              >
-                Upload new
-              </label>
+
+            {/* Upload controls */}
+            <div className="flex gap-x-[15px] items-center">
+              <div className="relative inline-block">
+                <input
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                  id="avatar-upload"
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="avatar-upload"
+                  className="text-sm font-normal text-dark-blue cursor-pointer"
+                >
+                  {avatarPreview ? "Upload new" : "Upload image"}
+                </label>
+              </div>
+
+              {avatarPreview && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, avatar: null }));
+                    setAvatarPreview(null);
+                  }}
+                  className="text-sm font-normal text-dark-blue cursor-pointer"
+                >
+                  Remove
+                </button>
+              )}
             </div>
-            {/* Remove */}
-            <button
-              type="button"
-              onClick={() => {
-                setFormData((prev) => ({ ...prev, avatar: null }));
-                setAvatarPreview(null);
-              }}
-              className="font-normal text-sm leading-[100%] tracking-normal text-dark-blue cursor-pointer"
-            >
-              Remove
-            </button>
           </div>
 
           {/* inputs  */}

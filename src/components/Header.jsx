@@ -5,8 +5,8 @@ import routes from "../router/routes";
 import LogOutMenu from "../components/LogOutMenu";
 import logo from "../assets/icons/HandEye.svg";
 import userIcon from "../assets/icons/user.svg";
+import defaultAvatar from "../assets/icons/default-avatar.jpg";
 import cart from "../assets/icons/shopping-cart-black.svg";
-import defaultAvatar from "../assets/images/profile.svg";
 
 function Header() {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -42,18 +42,28 @@ function Header() {
               <img src={cart} alt="cart" className="w-[24px] h-[24px]" />
             </button>
             <div className="flex items-center gap-[4px]">
-              <img
-                src={user?.avatar || defaultAvatar}
-                alt="avatar"
-                className="w-10 h-10 rounded-full object-cover"
-              />
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="avatar"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full border border-[#D1D5DB]">
+                  <img
+                    src={defaultAvatar}
+                    alt="user icon"
+                    className="w-full h-full rounded-full"
+                  />
+                </div>
+              )}
               <LogOutMenu logout={logout} />
             </div>
           </div>
         ) : (
           <Link to={routes.login} className="flex items-center gap-2">
             <img
-              src={defaultAvatar}
+              src={userIcon}
               alt="user"
               className="w-10 h-10 rounded-full object-cover"
             />
