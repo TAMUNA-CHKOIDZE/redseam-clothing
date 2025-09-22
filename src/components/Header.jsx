@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import routes from "../router/routes";
 import LogOutMenu from "../components/LogOutMenu";
@@ -7,10 +7,13 @@ import logo from "../assets/icons/HandEye.svg";
 import userIcon from "../assets/icons/user.svg";
 import defaultAvatar from "../assets/icons/default-avatar.jpg";
 import cart from "../assets/icons/shopping-cart-black.svg";
+import CartSidebar from "../components/CartSidebar";
 
 function Header() {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
   const location = useLocation();
+
+  const [isCartOpen, setIsCartOpen] = useState(false) // sidebar-ის ღია/დახურული მდგომარეობა
 
   // isAuthPage-ში ვინახავ ლოგინის ან რეგისტრაციის გვერდზეა თუ არა
   const isAuthPage =
@@ -38,7 +41,10 @@ function Header() {
           </Link>
         ) : isAuthenticated ? (
           <div className="flex items-center gap-[20px]">
-            <button className="cursor-pointer">
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="cursor-pointer"
+            >
               <img src={cart} alt="cart" className="w-[24px] h-[24px]" />
             </button>
             <div className="flex items-center gap-[4px]">
@@ -71,6 +77,8 @@ function Header() {
           </Link>
         )}
       </div>
+      {/* კალათის sidebar */}
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 }
