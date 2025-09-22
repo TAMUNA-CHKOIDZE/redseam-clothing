@@ -71,6 +71,11 @@ export const CartProvider = ({ children }) => {
   // კალათაში არსებული პროდუქციის საერთო რაოდენობა
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  // კალათის გასუფთავება
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -79,6 +84,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         cartCount,
+        clearCart,
       }}
     >
       {children}
