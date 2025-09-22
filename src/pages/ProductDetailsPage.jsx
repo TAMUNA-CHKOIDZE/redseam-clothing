@@ -14,7 +14,7 @@ function ProductDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { addToCart } = useCart(); // აქ იღებ CartContext-ის ფუნქციებს
+  const { addToCart } = useCart(); // აქ ვიღებ CartContext-ის ფუნქციებს
 
   useEffect(() => {
     setLoading(true);
@@ -109,7 +109,10 @@ function ProductDetailsPage() {
               <div className="flex gap-x-[13px]">
                 {(product.variants ?? []).map((variant, index) => {
                   const color = variant.color.toLowerCase();
-                  const isLightColor = color === "#ffffff" || color === "white";
+                  const isLightColor =
+                    color === "#ffffff" ||
+                    color === "white" ||
+                    color == "navy blue";
 
                   return (
                     <button

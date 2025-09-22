@@ -6,6 +6,9 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product, color, size, quantity) => {
+    const variant = product.variants.find((v) => v.color === color);
+    const image = variant?.image || product.cover_image || "";
+
     setCartItems((prevItems) => {
       // მოძებნე მსგავსი პროდუქტი კალათაში (id + ფერი + ზომა)
       const existingItem = prevItems.find(
@@ -22,7 +25,18 @@ export const CartProvider = ({ children }) => {
         );
       } else {
         // თუ არა, დაამატე ახალი პროდუქტი კალათაში
-        return [...prevItems, { ...product, color, size, quantity }];
+        return [
+          ...prevItems,
+          {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            color,
+            size,
+            quantity,
+            image,
+          },
+        ];
       }
     });
   };
@@ -39,7 +53,12 @@ export const CartProvider = ({ children }) => {
 
   // რაოდენობის შეცვლა variant-ებისთვის
   const updateQuantity = (productId, color, size, quantity) => {
-    if (quantity < 1) return;
+    if (quantity < 1) {
+      // თუ რაოდენობა 1-ზე ნაკლებია, წაშალე პროდუქტი
+      removeFromCart(productId, color, size);
+      return;
+    }
+
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === productId && item.color === color && item.size === size

@@ -6,7 +6,7 @@ import empryCart from "../assets/images/oops.png";
 
 function CartSidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { cartItems } = useCart();
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const handleCheckout = () => {
     onClose();
@@ -103,7 +103,12 @@ function CartSidebar({ isOpen, onClose }) {
                         <button
                           className="cursor-pointer text-[#E1DFE1]"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(
+                              item.id,
+                              item.color,
+                              item.size,
+                              item.quantity - 1
+                            )
                           }
                         >
                           –
@@ -112,7 +117,12 @@ function CartSidebar({ isOpen, onClose }) {
                         <button
                           className="cursor-pointer text-[#3E424A]"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(
+                              item.id,
+                              item.color,
+                              item.size,
+                              item.quantity + 1
+                            )
                           }
                         >
                           +
@@ -120,7 +130,9 @@ function CartSidebar({ isOpen, onClose }) {
                       </div>
 
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() =>
+                          removeFromCart(item.id, item.color, item.size)
+                        }
                         className="font-poppins font-normal text-[12px] leading-[100%] tracking-[0] text-[#3E424A] cursor-pointer hover:text-primary transition"
                       >
                         Remove
