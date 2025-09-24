@@ -4,6 +4,7 @@ import CustomInput from "../components/CustomInput";
 import cover from "../assets/images/cover.png";
 import cameraIcon from "../assets/icons/camera.svg";
 import routes from "../router/routes";
+import { registerUser } from "../api/register";
 
 function Register() {
   const navigate = useNavigate();
@@ -74,52 +75,19 @@ function Register() {
       setErrors(validationErrors);
       return;
     }
-
-    // ახალი FormData ობიექტის შექმნა სერვერზე multipart/form-data-ით გაგზავნისთვის
-    const data = new FormData();
-    data.append("username", formData.username);
-    data.append("email", formData.email);
-    data.append("password", formData.password);
-    data.append("password_confirmation", formData.confirmPassword);
-    if (formData.avatar) {
-      data.append("avatar", formData.avatar);
-    }
-
     try {
-      // რეგისტრაციის მოთხოვნის გაგზავნა სერვერზე
-      const response = await fetch(
-        "https://api.redseam.redberryinternship.ge/api/register",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json", // ველოდები JSON ფორმატს
-          },
-          body: data, // ვაგზავნი მონაცემებს
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        // თუ პასუხი არ არის წარმატებული
-        if (response.status === 422 && result.errors) {
-          // ვალიდაციის სერვერული შეცდომების დამუშავება
-          const apiValidationErrors = {};
-          for (const key in result.errors) {
-            apiValidationErrors[key] = result.errors[key][0];
-          }
-          setErrors(apiValidationErrors);
-        } else {
-          setApiError(result.message || "Registration failed");
-        }
-      } else {
-        // წარმატებული რეგისტრაცია — გადაყვანა login-ის გვერდზე
-        navigate(routes.login);
-      }
+      await registerUser(formData);
+      navigate(routes.login);
     } catch (error) {
-      // თუ fetch-მდე ან fetch-ის დროს მოხდა შეცდომა
-      setApiError("Something went wrong. Try again.");
-      console.error(error);
+      if (error.status === 422 && error.errors) {
+        const apiValidationErrors = {};
+        for (const key in error.errors) {
+          apiValidationErrors[key] = error.errors[key][0];
+        }
+        setErrors(apiValidationErrors);
+      } else {
+        setApiError(error.message || "Registration failed");
+      }
     }
   };
 
