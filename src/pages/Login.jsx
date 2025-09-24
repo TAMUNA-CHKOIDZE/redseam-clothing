@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import cover from "../assets/images/cover.png";
 import routes from "../router/routes";
 import CustomInput from "../components/CustomInput";
+import { loginUser } from "../api/loginUser";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Login() {
     email: "",
     password: "",
   });
+
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -49,38 +51,16 @@ function Login() {
     }
 
     try {
-      const response = await fetch(
-        "https://api.redseam.redberryinternship.ge/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
+      const data = await loginUser(formData.email, formData.password);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setApiError(
-            data.message || "Something went wrong. Please try again."
-          );
-        }
-      } else {
-        login(data.user);
-        navigate("/products");
-      }
+      login(data.user);
+      navigate(routes.productList);
     } catch (error) {
-      setApiError("Something went wrong. Please try again.");
-      console.error("Login error:", error);
+      if (error.errors) {
+        setErrors(error.errors);
+      } else {
+        setApiError("Invalid email or password.");
+      }
     }
   };
 
