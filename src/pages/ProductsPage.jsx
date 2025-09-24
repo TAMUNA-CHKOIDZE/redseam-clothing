@@ -6,6 +6,7 @@ import { fetchProducts } from "../api/products";
 import Pagination from "../components/Pagination";
 import ProductCard from "../components/ProductCard";
 import CustomInput from "../components/CustomInput";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 
 function ProductsPage() {
   // პროდუქტების და pagination-ისთვის საჭირო ინფორმაციის სტეიტები
@@ -84,11 +85,6 @@ function ProductsPage() {
     setPriceTo("");
     loadProducts(1, { priceFrom: "", priceTo: "" });
   };
-
-  // ჩატვირთვის დროს ვაჩვენებ loading-ს ტექსტის სახით და უნდა შეცვალო სკელეტონით
-  if (loading) {
-    return <div className="text-center py-20">Loading...</div>;
-  }
 
   // თუ შეცდომა არ არის, ვაჩვენებ ვიზუალურ შეტყობინებას
   if (error) {
@@ -243,18 +239,23 @@ function ProductsPage() {
 
       {/* პროდუქტის სია */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-        {products.map((product) => (
-          // <ProductCard key={product.id} product={product} />
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: 8 }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))
+          : products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
       </div>
 
       {/* გვერდების ნავიგაცია */}
-      <Pagination
-        currentPage={meta.current_page}
-        totalPages={meta.last_page}
-        onPageChange={handlePageChange}
-      />
+      {!loading && (
+        <Pagination
+          currentPage={meta.current_page}
+          totalPages={meta.last_page}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
