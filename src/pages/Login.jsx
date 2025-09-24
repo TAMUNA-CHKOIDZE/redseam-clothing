@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import cover from "../assets/images/cover.png";
@@ -8,7 +8,15 @@ import { loginUser } from "../api/loginUser";
 
 function Login() {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
+
+  // დალოგინებულ მომხმარებელს products-ის გვერდზე გადასვლის შემდეგ ტაბის უკანა ისარზე კლიკის შემდეგ <-
+  // ლოგინის გვერდზე დაბრუნების უფლება რომ არ მისცეს
+  useEffect(() => {
+    if (user) {
+      navigate("/products", { replace: true });
+    }
+  }, [user, navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
