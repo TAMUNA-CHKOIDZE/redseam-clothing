@@ -4,6 +4,7 @@ import { fetchProductById } from "../api/products";
 import cart from "../assets/icons/shopping-cart-white.svg";
 import routes from "../router/routes";
 import { useCart } from "../context/CartContext";
+import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -29,7 +30,7 @@ function ProductDetailsPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <ProductDetailsSkeleton />;
   if (error) return <div>{error}</div>;
   if (!product) return null;
 
