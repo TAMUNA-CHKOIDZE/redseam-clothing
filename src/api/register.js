@@ -14,23 +14,13 @@ export const registerUser = async (formData) => {
   }
 
   // fetch()-ით ვაგზავნი POST მოთხოვნას Content-Type: multipart/form-data ფორმატით, რათა მონაცემები გავაგზავნო/შევინახო
-  const response = await fetchAPI("/register", {
+  const result = await fetchAPI("/register", {
     method: "POST", // POST გამოიყენება მაშინ, როცა სერვერზე ახალი ობიექტი უნდა შეიქმნას
     headers: {
       Accept: "application/json", // სერვერისგან ველოდები პასუხს JSON ფორმატში
     },
     body: data, // ვაგზავნი მონაცემებს (data არის FormData, რომელიც შეიცავს ველებს)
   });
-
-  const result = await response.json(); // response.json() ფუნქცია იღებს HTTP-ს პასუხს (response) და აქცევს JSON ობიექტად და await ელის, სანამ ეს პროცესი დასრულდება
-
-  //   თუ პასუხი წარუმატებელია
-  if (!response.ok) {
-    const error = new Error(result.message || "Registration failed");
-    error.status = response.status;
-    error.errors = result.errors;
-    throw error;
-  }
 
   return result;
 };

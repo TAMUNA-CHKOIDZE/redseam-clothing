@@ -12,12 +12,14 @@ async function fetchAPI(endpoint, options = {}) {
 
   const response = await fetch(url, defaultOptions);
 
+  const result = await response.json();
+
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || "API request failed");
   }
 
-  return response.json();
+  return result;
 }
 
 export default fetchAPI;
