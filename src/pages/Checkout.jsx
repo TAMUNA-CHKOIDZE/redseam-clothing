@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import CheckoutForm from "../components/CheckoutForm";
 import ConfirmationModal from "../components/ConfirmationModal";
@@ -11,6 +11,12 @@ function Checkout() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [showModal, setShowModal] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigate("/products");
+    }
+  }, [cartItems, navigate]);
 
   const handleFormSubmit = (formData) => {
     setShowModal(true); // ჩნდება ConfirmationModal
