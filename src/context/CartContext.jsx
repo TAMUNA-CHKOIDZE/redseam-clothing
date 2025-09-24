@@ -1,9 +1,41 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useContext as useAuthContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  const { user } = useAuthContext(AuthContext); // user ავტ კონტექსტიდან
+
+  // key კალათისთვის User ID-ის მიხედვით
+  const storageKey = user ? `cart_${user.id}` : "cart_guest";
+
+  // კალათის დასაწყისი User ID-ის მიხედვით localStorage-იდან
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const storedCart = localStorage.getItem("cart");
+      return storedCart ? JSON.parse(storedCart) : [];
+    } catch (error) {
+      console.error("Failed to parse cart from localStorage:", error);
+      return [];
+    }
+  });
+
+  // როცა user შეიცვლება, კალათის წამოღება თავიდან
+  useEffect(() => {
+    try {
+      const storedCart = localStorage.getItem(storageKey);
+      setCartItems(storedCart ? JSON.parse(storedCart) : []);
+    } catch (error) {
+      console.error("Failed to parse cart from localStorage:", error);
+      setCartItems([]);
+    }
+  }, [storageKey]);
+
+  // კალათის ცვლილების შენახვა storageKey-ის მიხედვით
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(cartItems));
+  }, [cartItems, storageKey]);
 
   const addToCart = (product, color, size, quantity) => {
     const variant = product.variants.find((v) => v.color === color);
@@ -71,9 +103,10 @@ export const CartProvider = ({ children }) => {
   // კალათაში არსებული პროდუქციის საერთო რაოდენობა
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // კალათის გასუფთავება
+  // localStorage-დან კალათის გასუფთავება
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem(storageKey);
   };
 
   return (
