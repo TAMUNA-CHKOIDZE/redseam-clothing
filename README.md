@@ -1,7 +1,5 @@
 # RedSeam Clothing — E-commerce React App
 
-![RedSeam Logo](https://www.figma.com/file/mNz6RGauIhHyuMrGFcPBHs/Bootcamp---RedSeam-Clothing)
-
 ## Project Overview
 
 RedSeam Clothing is an e-commerce web application built with React and Tailwind CSS designed for customers to browse and purchase clothing items seamlessly.
