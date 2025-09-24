@@ -4,9 +4,11 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 
+const baseName = import.meta.env.PROD ? "/redseam-clothing" : "/";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={baseName}>
       <App />
     </BrowserRouter>
   </StrictMode>

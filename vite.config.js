@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
   server: { open: true },
-  base: "/redseam-clothing/",
-});
+  base: command === "serve" ? "/" : "/redseam-clothing/",
+}));
