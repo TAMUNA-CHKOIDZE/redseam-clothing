@@ -5,6 +5,7 @@ import cart from "../assets/icons/shopping-cart-white.svg";
 import routes from "../router/routes";
 import { useCart } from "../context/CartContext";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
+import NotFound from "./NotFound";
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -31,7 +32,7 @@ function ProductDetailsPage() {
   }, [id]);
 
   if (loading) return <ProductDetailsSkeleton />;
-  if (error) return <div>{error}</div>;
+  if (error) return <NotFound />;
   if (!product) return null;
 
   const selectedVariant = product.variants[selectedVariantIndex];

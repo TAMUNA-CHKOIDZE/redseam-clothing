@@ -95,3 +95,4 @@ body {
 .input {
     @apply w-full border border-[#E1DFE1] rounded-[8px] bg-white h-[42px] px-[12px] placeholder:text-[14px] placeholder:leading-[100%] placeholder:font-normal placeholder:tracking-[0%] placeholder:text-[#3E424A];
 }
+
