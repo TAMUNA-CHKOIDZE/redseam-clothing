@@ -4,17 +4,10 @@
     <meta charset="UTF-8" />
     <title>Redirecting...</title>
     <script type="text/javascript">
-      // SPA fallback GitHub Pages-ზე
-      // var pathname = window.location.pathname;
-      // var redirect = '/redseam-clothing/index.html';
-      // window.location.replace(redirect + window.location.search + window.location.hash);
-
-      // მოაქვს URL-ის path და ამატებს hash-ის სახით index.html-ს
       var path = window.location.pathname;
       var search = window.location.search || "";
       var hash = "#"+path.replace("/redseam-clothing", "") + window.location.hash;
       window.location.replace("/redseam-clothing/" + search + hash);
-
     </script>
   </head>
   <body></body>
