@@ -4,8 +4,8 @@ async function fetchAPI(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
   const defaultOptions = {
     headers: {
-      "Content-Type": "application/json",
-      // ავტორიზაციის დამატება
+      Accept: "application/json",
+      ...options.headers,
     },
     ...options,
   };
@@ -15,8 +15,10 @@ async function fetchAPI(endpoint, options = {}) {
   const result = await response.json();
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "API request failed");
+    const error = new Error(result.message || "API request failed");
+    error.status = response.status;
+    error.errors = result.errors || null;
+    throw error;
   }
 
   return result;
